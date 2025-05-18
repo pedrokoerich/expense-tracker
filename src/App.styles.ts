@@ -3,13 +3,13 @@ import styled from 'styled-components';
 export const Container = styled.div``;
 
 export const Header = styled.div`
-    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    background: linear-gradient(135deg, #23272f, #43464d); // chumbo/cinza escuro
     height: 150px;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 5px solid #3b82f6;
+    border-bottom: 5px solid #23272f;
 `;
 
 export const HeaderText = styled.h1`
