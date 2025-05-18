@@ -1,65 +1,119 @@
+import { useState, useEffect } from 'react';
 import * as C from './App.styles';
 import { Item } from './types/Item';
 import { Category } from './types/Category';
-import { items } from './data/items';
 import { categories } from './data/categories';
-import { use, useEffect, useState } from 'react';
-import { filterListByMonth, getCurrentMonth } from './helpers/dateFilter';
+import { items } from './data/items';
+import { getCurrentMonth, filterListByMonth } from './helpers/dateFilter';
 import { TableArea } from './components/TableArea';
 import { InfoArea } from './components/InfoArea';
-
-
+import { InputArea } from './components/InputArea';
 
 const App = () => {
   const [list, setList] = useState(items);
   const [filteredList, setFilteredList] = useState<Item[]>([]);
-  const  [currentMonth, setCurrentMonth] = useState(getCurrentMonth());
+  const [currentMonth, setCurrentMonth] = useState(getCurrentMonth());
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
 
-  useEffect(() => {
-    setFilteredList(filterListByMonth(list, currentMonth));
-  }
-  
-  , [list, currentMonth]);
+  useEffect(()=>{
+    setFilteredList( filterListByMonth(list, currentMonth) );
+  }, [list, currentMonth]);
 
-  useEffect(() => {
-    let inCome = 0;
-    let expense = 0;
+  useEffect(()=>{
+    let incomeCount = 0;
+    let expenseCount = 0;
 
-    for (let i in filteredList) {
-      if (categories[filteredList[i].category].expense) {
-        expense += filteredList[i].value;
+    for(let i in filteredList) {
+      if(categories[filteredList[i].category].expense) {
+        expenseCount += filteredList[i].value;
       } else {
-        inCome += filteredList[i].value;
+        incomeCount += filteredList[i].value;
       }
     }
-    setIncome(inCome);
-    setExpense(expense);
-  }
-  , [filteredList]);
+
+    setIncome(incomeCount);
+    setExpense(expenseCount);
+  }, [filteredList]);
 
   const handleMonthChange = (newMonth: string) => {
     setCurrentMonth(newMonth);
   }
 
-  return ( 
-    <C.Contaniner>
+  const handleAddItem = (item: Item) => {
+    let newList = [...list];
+    newList.push(item);
+    setList(newList);
+  }
+
+  const handleDeleteItem = (index: number) => {
+    const newList = [...list];
+    newList.splice(index, 1);
+    setList(newList);
+  };
+
+  const handleEditItem = (index: number) => {
+    setEditingIndex(index);
+    setEditingItem({ ...filteredList[index] });
+  };
+
+  const handleEditItemChange = (field: keyof Item, value: any) => {
+    if (!editingItem) return;
+    setEditingItem({ ...editingItem, [field]: value });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditingItem(null);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingIndex === null || !editingItem) return;
+    // Encontra o índice real na lista original
+    const realIndex = list.findIndex(
+      item =>
+        item.date.getTime() === filteredList[editingIndex].date.getTime() &&
+        item.category === filteredList[editingIndex].category &&
+        item.title === filteredList[editingIndex].title &&
+        item.value === filteredList[editingIndex].value
+    );
+    if (realIndex === -1) return;
+    const newList = [...list];
+    newList[realIndex] = { ...editingItem };
+    setList(newList);
+    setEditingIndex(null);
+    setEditingItem(null);
+  };
+
+  return (
+    <C.Container>
       <C.Header>
         <C.HeaderText>Sistema Financeiro</C.HeaderText>
       </C.Header>
       <C.Body>
-        {/* Área de Informações */}
-        <InfoArea currentMonth={currentMonth}
-        onMonthChange={handleMonthChange}
-        inCome={income}
-        expense={expense}/>
-        {/* Área de Inserção */}
-        {/* Tabela de Items */}
-        <TableArea list={filteredList} />
+        <InfoArea
+          currentMonth={currentMonth}
+          onMonthChange={handleMonthChange}
+          income={income}
+          expense={expense}
+        />
 
+        <InputArea onAdd={handleAddItem} />
+
+        <TableArea
+          list={filteredList}
+          onDelete={handleDeleteItem}
+          onEdit={handleEditItem}
+          editingIndex={editingIndex}
+          editingItem={editingItem}
+          onEditChange={handleEditItemChange}
+          onCancelEdit={handleCancelEdit}
+          onSaveEdit={handleSaveEdit}
+        />
       </C.Body>
-    </C.Contaniner> 
+    </C.Container>
   );
 }
 
