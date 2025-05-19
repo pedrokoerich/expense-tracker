@@ -8,6 +8,8 @@ import { getCurrentMonth, filterListByMonth } from './helpers/dateFilter';
 import { TableArea } from './components/TableArea';
 import { InfoArea } from './components/InfoArea';
 import { InputArea } from './components/InputArea';
+import { ExpenseCardList } from './components/ExpenseCardList';
+import { AddDrawer } from './components/AddDrawer';
 
 const App = () => {
   const [list, setList] = useState(items);
@@ -17,6 +19,15 @@ const App = () => {
   const [expense, setExpense] = useState(0);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Hook para detectar mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 700);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(()=>{
     setFilteredList( filterListByMonth(list, currentMonth) );
@@ -100,18 +111,45 @@ const App = () => {
           expense={expense}
         />
 
-        <InputArea onAdd={handleAddItem} />
+        {isMobile && (
+          <AddDrawer
+            open={drawerOpen}
+            onOpen={() => setDrawerOpen(true)}
+            onClose={() => setDrawerOpen(false)}
+          >
+            <InputArea
+              onAdd={item => {
+                handleAddItem(item);
+                setDrawerOpen(false);
+              }}
+            />
+          </AddDrawer>
+        )}
+        {!isMobile && <InputArea onAdd={handleAddItem} />}
 
-        <TableArea
-          list={filteredList}
-          onDelete={handleDeleteItem}
-          onEdit={handleEditItem}
-          editingIndex={editingIndex}
-          editingItem={editingItem}
-          onEditChange={handleEditItemChange}
-          onCancelEdit={handleCancelEdit}
-          onSaveEdit={handleSaveEdit}
-        />
+        {isMobile ? (
+          <ExpenseCardList
+            list={filteredList}
+            onDelete={handleDeleteItem}
+            onEdit={handleEditItem}
+            editingIndex={editingIndex}
+            editingItem={editingItem}
+            onEditChange={handleEditItemChange}
+            onCancelEdit={handleCancelEdit}
+            onSaveEdit={handleSaveEdit}
+          />
+        ) : (
+          <TableArea
+            list={filteredList}
+            onDelete={handleDeleteItem}
+            onEdit={handleEditItem}
+            editingIndex={editingIndex}
+            editingItem={editingItem}
+            onEditChange={handleEditItemChange}
+            onCancelEdit={handleCancelEdit}
+            onSaveEdit={handleSaveEdit}
+          />
+        )}
       </C.Body>
     </C.Container>
   );
