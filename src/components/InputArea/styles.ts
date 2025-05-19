@@ -9,6 +9,13 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     gap: 15px;
+
+    @media (max-width: 800px) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px;
+    }
 `;
 
 export const InputLabel = styled.label`

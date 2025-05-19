@@ -2,38 +2,61 @@ import styled from 'styled-components';
 
 export const TableLine = styled.tr`
     &:nth-child(even) {
-        background-color: #f3f4f6; /* Cinza claro para linhas alternadas */
+        background-color: #f3f4f6;
+    }
+
+    @media (max-width: 700px) {
+        display: table-row;
     }
 `;
 
 export const TableColumn = styled.td`
-    padding: 12px 8px; /* Ajuste no espaçamento interno */
+    padding: 12px 8px;
     font-size: 1rem;
-    color: #4b5563; /* Cinza escuro para texto */
+    color: #4b5563;
+
+    @media (max-width: 700px) {
+        padding: 8px 4px;
+        font-size: 0.95rem;
+    }
 `;
 
 export const TableHeader = styled.th`
-    padding: 12px 8px; /* Espaçamento interno ajustado */
+    padding: 12px 8px;
     text-align: left;
     font-size: 1rem;
-    color: #374151; /* Cinza escuro */
-    border-bottom: 2px solid #e5e7eb; /* Linha separadora */
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+
+    @media (max-width: 700px) {
+        padding: 8px 4px;
+        font-size: 0.95rem;
+    }
 `;
 
 export const Category = styled.div<{ color: string }>`
     display: inline-block;
-    padding: 6px 12px; /* Mais espaçamento interno */
-    border-radius: 8px; /* Bordas mais arredondadas */
+    padding: 6px 12px;
+    border-radius: 8px;
     color: #fff;
     background-color: ${props => props.color};
     font-size: 0.9rem;
     font-weight: 500;
+
+    @media (max-width: 700px) {
+        padding: 4px 8px;
+        font-size: 0.85rem;
+    }
 `;
 
 export const Value = styled.div<{ color: string }>`
     color: ${props => props.color};
     font-weight: bold;
     font-size: 1rem;
+
+    @media (max-width: 700px) {
+        font-size: 0.95rem;
+    }
 `;
 
 export const IconButton = styled.button<{ edit?: boolean; delete?: boolean }>`
@@ -55,4 +78,9 @@ export const IconButton = styled.button<{ edit?: boolean; delete?: boolean }>`
     justify-content: center;
     padding: 4px;
     border-radius: 4px;
+
+    @media (max-width: 700px) {
+        font-size: 1rem;
+        padding: 2px;
+    }
 `;
