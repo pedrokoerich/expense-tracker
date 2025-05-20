@@ -10,7 +10,6 @@ import { InfoArea } from './components/InfoArea';
 import { InputArea } from './components/InputArea';
 import { ExpenseCardList } from './components/ExpenseCardList';
 import { AddDrawer } from './components/AddDrawer';
-import { CategoryInputArea } from './components/CategoryInputArea';
 
 const App = () => {
   const [list, setList] = useState(items);
@@ -124,8 +123,6 @@ const App = () => {
           expense={expense}
         />
 
-        <CategoryInputArea onAdd={handleAddCategory} />
-
         {isMobile && (
           <AddDrawer
             open={drawerOpen}
@@ -138,10 +135,17 @@ const App = () => {
                 setDrawerOpen(false);
               }}
               categories={categories}
+              onAddCategory={handleAddCategory}
             />
           </AddDrawer>
         )}
-        {!isMobile && <InputArea onAdd={handleAddItem} categories={categories} />}
+        {!isMobile && (
+          <InputArea
+            onAdd={handleAddItem}
+            categories={categories}
+            onAddCategory={handleAddCategory}
+          />
+        )}
 
         {isMobile ? (
           <ExpenseCardList
