@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as C from './App.styles';
 import { Item } from './types/Item';
 import { Category } from './types/Category';
-import { categories } from './data/categories';
+import { categories as initialCategories } from './data/categories';
 import { items } from './data/items';
 import { getCurrentMonth, filterListByMonth } from './helpers/dateFilter';
 import { TableArea } from './components/TableArea';
@@ -10,6 +10,7 @@ import { InfoArea } from './components/InfoArea';
 import { InputArea } from './components/InputArea';
 import { ExpenseCardList } from './components/ExpenseCardList';
 import { AddDrawer } from './components/AddDrawer';
+import { CategoryInputArea } from './components/CategoryInputArea';
 
 const App = () => {
   const [list, setList] = useState(items);
@@ -20,6 +21,7 @@ const App = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [categories, setCategories] = useState(initialCategories);
 
   // Hook para detectar mobile
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
@@ -98,6 +100,17 @@ const App = () => {
     setEditingItem(null);
   };
 
+  const handleAddCategory = (key: string, title: string, color: string, expense: boolean) => {
+    if (categories[key]) {
+      alert('Já existe uma categoria com esse identificador!');
+      return;
+    }
+    setCategories({
+      ...categories,
+      [key]: { title, color, expense }
+    });
+  };
+
   return (
     <C.Container>
       <C.Header>
@@ -111,6 +124,8 @@ const App = () => {
           expense={expense}
         />
 
+        <CategoryInputArea onAdd={handleAddCategory} />
+
         {isMobile && (
           <AddDrawer
             open={drawerOpen}
@@ -122,10 +137,11 @@ const App = () => {
                 handleAddItem(item);
                 setDrawerOpen(false);
               }}
+              categories={categories}
             />
           </AddDrawer>
         )}
-        {!isMobile && <InputArea onAdd={handleAddItem} />}
+        {!isMobile && <InputArea onAdd={handleAddItem} categories={categories} />}
 
         {isMobile ? (
           <ExpenseCardList
@@ -137,6 +153,7 @@ const App = () => {
             onEditChange={handleEditItemChange}
             onCancelEdit={handleCancelEdit}
             onSaveEdit={handleSaveEdit}
+            categories={categories}
           />
         ) : (
           <TableArea
@@ -148,6 +165,7 @@ const App = () => {
             onEditChange={handleEditItemChange}
             onCancelEdit={handleCancelEdit}
             onSaveEdit={handleSaveEdit}
+            categories={categories}
           />
         )}
       </C.Body>
