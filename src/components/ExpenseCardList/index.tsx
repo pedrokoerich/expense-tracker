@@ -22,6 +22,13 @@ type Props = {
   onEditChange: (field: keyof Item, value: any) => void;
   onCancelEdit: () => void;
   onSaveEdit: () => void;
+  categories: {
+    [key: string]: {  
+      title: string;
+      color: string;
+      expense: boolean;
+    };
+  }
 };
 
 export const ExpenseCardList = ({

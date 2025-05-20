@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import * as C from './styles';
 import { Item } from '../../types/Item';
-
-import { categories } from '../../data/categories';
+import { Category } from '../../types/Category';
 
 type Props = {
   onAdd: (item: Item) => void;
+  categories: Category;
 };
 
-export const InputArea = ({ onAdd }: Props) => {
+export const InputArea = ({ onAdd, categories }: Props) => {
   const [dateField, setDateField] = useState('');
   const [categoryField, setCategoryField] = useState('');
   const [titleField, setTitleField] = useState('');
